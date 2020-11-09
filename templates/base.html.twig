@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+        {% endblock %}
+    </head>
+    <body>
+        <form class="form-inline my-2 my-lg-0" action="{{ path('blog_search') }}" method="get">
+            <input class="form-control mr-sm-2" type="search" aria-label="Search" name="q">
+            <button class="btn btn-default my-2 my-sm-0" type="submit">Ищем</button>
+        </form>
+        <a href="{{ path('connect_google_start') }}">Войти через Google</a><br>
+        {% block body %}{% endblock %}
+        {% block javascripts %}
+            <script src="{{ asset('build/js/app.js') }}"></script>
+        {% endblock %}
+    </body>
+</html>

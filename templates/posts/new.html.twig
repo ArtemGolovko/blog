@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.body, { 'attr': {
+            'rows': '10',
+            'cols': '10'
+        }}) }}
+        <button class="btn btn-default" type="submit">Сохранить</button>
+    {{ form_end(form) }}
+{% endblock %}

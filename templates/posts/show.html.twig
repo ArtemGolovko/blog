@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<br>
+<div class="container col-sm-12">
+    <h4>{{ post.title }}</h4>
+    <p>{{ post.body }}</p><hr>
+    <span>{{ post.getCreatedAt() | date("m/d/Y") }}</span><br><hr>
+    {% if form is defined %}
+    <div class="container">
+        {{ form_start(form) }}
+        {{ form_row(form.comment) }}
+        <button type="submit" class="btn btn-primary">Отправить</button>
+        {{ form_end(form) }}
+    </div>
+    {% endif %}
+    {%  for comment in post.comments %}
+        <p>{{ comment.comment }}</p><hr>
+    {% endfor %}
+</div>
+{% endblock %}
