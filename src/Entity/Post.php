@@ -24,7 +24,6 @@ class Post
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
      * @ORM\Column(type="uuid")
      */
     private $id;

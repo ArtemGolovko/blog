@@ -51,7 +51,7 @@ class PostsController extends AbstractController
      */
     public function addPost(Request $request, Slugify $slugify)
     {
-        $post = new Post();
+        $post = Post::fromDraft($this->getUser());
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
@@ -136,8 +136,7 @@ class PostsController extends AbstractController
      */
     public function commentNew(Post $post, Request $request)
     {
-        $comment = new Comment();
-        $comment->setUser($this->getUser());
+        $comment =  Comment::create("", $this->getUser(), $post);
         $post->addComment($comment);
 
         $form = $this->createForm(CommentType::class, $comment);
