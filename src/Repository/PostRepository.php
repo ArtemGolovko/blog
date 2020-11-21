@@ -1,58 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use App\Entity\Post;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @method Post|null find($id, $lockMode = null, $lockVersion = null)
- * @method Post|null findOneBy(array $criteria, array $orderBy = null)
- * @method Post[]    findAll()
- * @method Post[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class PostRepository extends ServiceEntityRepository
+class PostRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
+
+    public function __construct(EntityManagerInterface $em)
     {
-        parent::__construct($registry, Post::class);
+        $this->em = $em;
+        $this->repository = $em->getRepository(Post::class);
     }
 
-    // /**
-    //  * @return Post[] Returns an array of Post objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function add(Post $post)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->em->persist($post);
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Post
+    public function findOneBySlug(string $slug)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
-    public function searchByQuery(string $query)
-    {
-        return $this->createQueryBuilder('p')
-            ->where('p.title LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
+        return $this->repository->findOneBy(['slug' => $slug]);
     }
 }

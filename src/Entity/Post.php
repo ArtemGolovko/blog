@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 
@@ -23,7 +23,8 @@ class Post
     public const PUBLISHED = 'published';
 
     /**
-     * @ORM\Id
+     * @var Uuid
+     * @ORM\Id()
      * @ORM\Column(type="uuid")
      */
     private $id;
@@ -47,7 +48,7 @@ class Post
      * @var string
      * @ORM\Column(type="string", nullable=false)
      */
-    public $status;
+    private $status;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=false)
@@ -73,10 +74,50 @@ class Post
      */
     private $user;
 
+    /**
+     * @var ArrayCollection
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", cascade={"persist"})
+     * @ORM\JoinTable(name="post_categories")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
+     */
+    private $categories;
+
     private function __construct()
     {
         $this->id = Uuid::uuid4();
+        $this->categories = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
+    }
+
+    public static function fromDraft(
+        User $user,
+        ?string $title,
+        ?string $body,
+        ?string $slug
+    ): Post {
+
+        $post = new self();
+        $post->title = $title;
+        $post->body = $body;
+        $post->slug = $slug;
+        $post->user = $user;
+        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
+        $post->status = self::DRAFT;
+
+        return $post;
+    }
+
+    public static function fromPublished(string $title, string $body, string $slug): Post
+    {
+        $post = new self();
+        $post->title = $title;
+        $post->body = $body;
+        $post->slug = $slug;
+        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
+        $post->publishedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
+        $post->status = self::PUBLISHED;
+
+        return $post;
     }
 
     /**
@@ -143,34 +184,11 @@ class Post
         return $this->updatedAt;
     }
 
-    public static function fromDraft(
-        User $user,
-        ?string $title,
-        ?string $body,
-        ?string $slug
-    ): Post {
-
-        $post = new self();
-        $post->title = $title;
-        $post->body = $body;
-        $post->slug = $slug;
-        $post->user = $user;
-        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
-        $post->status = self::DRAFT;
-
-        return $post;
-    }
-
-    public static function fromPublished(string $title, string $body, string $slug): Post
+    /**
+     * @return User
+     */
+    public function getUser(): User
     {
-        $post = new self();
-        $post->title = $title;
-        $post->body = $body;
-        $post->slug = $slug;
-        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
-        $post->publishedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
-        $post->status = self::PUBLISHED;
-
-        return $post;
+        return $this->user;
     }
 }
