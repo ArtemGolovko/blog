@@ -2,67 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\Entity;
+namespace App\Repository;
 
-use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use App\Entity\Category;
 
-/**
- * @ORM\Entity()
- * @ORM\Table(name="categories", indexes={
- *     @ORM\Index(columns={"name"}),
- *     @ORM\Index(columns={"date"})
- *  })
- */
-class Category
+class CategoryRepository
 {
     /**
-     * @var Uuid
-     * @ORM\Id()
-     * @ORM\Column(type="uuid")
+     * @var EntityManagerInterface
      */
-    private $id;
+    private $em;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=false)
+     * @var EntityRepository
      */
-    private $name;
+    private $repository;
 
-    /**
-     * @var \DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $date;
-
-    public function __construct(string $name)
+    public function __construct(EntityManagerInterface $em)
     {
-        $this->id = Uuid::uuid4();
-        $this->name = $name;
-        $this->date = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
+        $this->em = $em;
+        $this->repository = $em->getRepository(Category::class);
     }
 
-    /**
-     * @return Uuid
-     */
-    public function getId(): Uuid
+    public function add(Category $category)
     {
-        return $this->id;
+        $this->em->persist($category);
     }
 
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function getDate(): \DateTimeImmutable
+    public function findOneByName(string $name)
     {
-        return $this->date;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
+        return $this->repository->findOneBy(['name' => $name]);
     }
 }
