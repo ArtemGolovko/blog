@@ -122,10 +122,26 @@ class PostsController extends AbstractController
     /**
      * @Route("/posts/{slug}", name="blog_show")
      */
-    public function post(Post $post)
+    public function post(Post $post, Request $request)
     {
+//        return $this->render('posts/show.html.twig', [
+//            'post' => $post
+//        ]);
+        $comment =  Comment::create("", $this->getUser(), $post);
+
+        $form = $this->createForm(CommentType::class, $comment);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($comment);
+            $em->flush();
+        }
+
         return $this->render('posts/show.html.twig', [
-            'post' => $post
+            'post' => $post,
+            'form' => $form->createView()
         ]);
     }
 
@@ -137,7 +153,6 @@ class PostsController extends AbstractController
     public function commentNew(Post $post, Request $request)
     {
         $comment =  Comment::create("", $this->getUser(), $post);
-        $post->addComment($comment);
 
         $form = $this->createForm(CommentType::class, $comment);
 

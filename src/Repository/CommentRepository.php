@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Comment;
+use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,4 +48,17 @@ class CommentRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /**
+     * @param Post $post
+     * @return array|int|string
+     */
+    public function findByPost(Post $post)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.post = :post')
+            ->setParameter('post', $post)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

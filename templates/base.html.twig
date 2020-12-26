@@ -12,7 +12,12 @@
             <input class="form-control mr-sm-2" type="search" aria-label="Search" name="q">
             <button class="btn btn-default my-2 my-sm-0" type="submit">Ищем</button>
         </form>
-        <a href="{{ path('connect_google_start') }}">Войти через Google</a><br>
+        {% if not is_granted('ROLE_USER') %}
+            <a href="{{ path('connect_google_start') }}">Войти через Google</a>
+            <a href="{{ path('connect_github_start') }}">Войти через Github</a>
+        {% endif %}
+
+        <br>
         {% block body %}{% endblock %}
         {% block javascripts %}
             <script src="{{ asset('build/js/app.js') }}"></script>

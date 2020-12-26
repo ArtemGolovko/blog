@@ -35,4 +35,9 @@ class PostRepository
     {
         return $this->repository->findOneBy(['slug' => $slug]);
     }
+
+    public function findAll()
+    {
+        return $this->repository->findAll();
+    }
 }

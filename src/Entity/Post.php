@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Comment;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -81,6 +82,12 @@ class Post
      * @ORM\JoinColumn(referencedColumnName="id", nullable=false)
      */
     private $categories;
+
+    /**
+     * @var ArrayCollection
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="post")
+     */
+    private $comments;
 
     private function __construct()
     {
@@ -190,5 +197,10 @@ class Post
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getComments()
+    {
+        return $this->comments;
     }
 }
