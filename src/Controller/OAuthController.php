@@ -43,29 +43,9 @@ class OAuthController extends AbstractController
     }
 
     /**
-     * @Route("/connect/github", name="connect_github_start")
-     * @param ClientRegistry $clientRegistry
-     * @return RedirectResponse
+     * @Route("/logout", name="logout")
      */
-    public function redirectToGithubConnect(ClientRegistry $clientRegistry)
+    public function logout()
     {
-        return $clientRegistry
-            ->getClient('github')
-            ->redirect([
-                'user', 'public_repo'
-            ]);
-    }
-
-    /**
-     * @Route("/github/auth", name="github_auth")
-     * @return RedirectResponse|Response
-     */
-    public function authenticateGithubUser()
-    {
-        if (!$this->getUser()) {
-            return new Response('User not found', 404);
-        }
-
-        return $this->redirectToRoute('blog_posts');
     }
 }

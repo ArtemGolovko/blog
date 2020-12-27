@@ -150,9 +150,9 @@ class OAuthGoogleAuthenticator extends SocialAuthenticator
         Request $request,
         TokenInterface $token,
         $providerKey
-    ): ?Response
+    ): Response
     {
-        return null;
+        return new RedirectResponse('/posts');
     }
 
     /**

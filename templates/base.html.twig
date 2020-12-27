@@ -14,7 +14,8 @@
         </form>
         {% if not is_granted('ROLE_USER') %}
             <a href="{{ path('connect_google_start') }}">Войти через Google</a>
-            <a href="{{ path('connect_github_start') }}">Войти через Github</a>
+        {% else %}
+            <a href="{{ path('logout') }}">Выйти</a>
         {% endif %}
 
         <br>

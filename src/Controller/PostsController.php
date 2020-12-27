@@ -10,6 +10,7 @@ use App\Form\CommentType;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use Cocur\Slugify\Slugify;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,13 +122,13 @@ class PostsController extends AbstractController
 
     /**
      * @Route("/posts/{slug}", name="blog_show")
+     * @IsGranted("ROLE_USER")
      */
-    public function post(Post $post, Request $request)
+    public function addComment(Post $post, Request $request)
     {
-//        return $this->render('posts/show.html.twig', [
-//            'post' => $post
-//        ]);
-        $comment =  Comment::create("", $this->getUser(), $post);
+
+
+        $comment = Comment::create("", $this->getUser(), $post);
 
         $form = $this->createForm(CommentType::class, $comment);
 
@@ -139,36 +140,20 @@ class PostsController extends AbstractController
             $em->flush();
         }
 
+
         return $this->render('posts/show.html.twig', [
             'post' => $post,
-            'form' => $form->createView()
+            'form' =>  $form->createView()
         ]);
     }
 
     /**
-     * @param Post $post
-     * @param Request $request
-     * @Route("/post/{slug}", methods={"POST"}, name="comment_new")
+     * @Route("/posts/{slug}", name="blog_show")
      */
-    public function commentNew(Post $post, Request $request)
+    public function post(Post $post)
     {
-        $comment =  Comment::create("", $this->getUser(), $post);
-
-        $form = $this->createForm(CommentType::class, $comment);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($comment);
-            $em->flush();
-
-            return $this->redirectToRoute('post_show', ['slug' => $post->getSlug()]);
-        }
-
-        return $this->render('post/show.html.twig', [
-            'post' => $post,
-            'form' => $form->createView()
+        return $this->render('posts/show.html.twig', [
+            'post' => $post
         ]);
     }
 }

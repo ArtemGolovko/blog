@@ -18,9 +18,9 @@ security:
                 entry_point: App\Security\OAuthGoogleAuthenticator
                 authenticators:
                     - App\Security\OAuthGoogleAuthenticator
-                    - App\Security\OAuthGithubAuthenticator
             logout:
                 path: logout
+                target: blog_posts
 
 
             # activate different ways to authenticate

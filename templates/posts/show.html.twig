@@ -9,10 +9,14 @@
     <p>{{ post.body }}</p><hr>
     <span>{{ post.getCreatedAt() | date("m/d/Y") }}</span><br><hr>
     <div class="container">
-        {{ form_start(form) }}
-        {{ form_row(form.comment, {'label': ' '}) }}
-        <button type="submit" class="btn btn-primary">Отправить</button>
-        {{ form_end(form) }}
+    {% if form is defined %}
+            {{ form_start(form) }}
+            {{ form_row(form.comment, {'label': ' '}) }}
+            <button type="submit" class="btn btn-primary">Отправить</button>
+            {{ form_end(form) }}
+    {% else %}
+        <h3>Войдите что би остовлять кометарии</h3>
+    {% endif %}
     </div>
     <h1>Коментарии</h1>
     {%  for comment in post.comments %}
