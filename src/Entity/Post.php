@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Entity\Comment;
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\UpdatedAtTrait;
 use App\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,6 +19,7 @@ use Ramsey\Uuid\Uuid;
  *     @ORM\Index(columns={"status"}),
  *     @ORM\Index(columns={"created_at"})
  * })
+ * @ORM\HasLifecycleCallbacks
  */
 class Post
 {
@@ -51,10 +54,6 @@ class Post
      */
     private $status;
 
-    /**
-     * @ORM\Column(type="datetime_immutable", nullable=false)
-     */
-    private $createdAt;
 
     /**
      * @var \DateTimeImmutable
@@ -62,11 +61,6 @@ class Post
      */
     private $publishedAt;
 
-    /**
-     * @var \DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable", nullable=false)
-     */
-    private $updatedAt;
 
     /**
      * @var User
@@ -89,11 +83,13 @@ class Post
      */
     private $comments;
 
+    use CreatedAtTrait;
+    use UpdatedAtTrait;
+
     private function __construct()
     {
         $this->id = Uuid::uuid4();
         $this->categories = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
     }
 
     public static function fromDraft(
@@ -108,7 +104,6 @@ class Post
         $post->body = $body;
         $post->slug = $slug;
         $post->user = $user;
-        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
         $post->status = self::DRAFT;
 
         return $post;
@@ -120,7 +115,6 @@ class Post
         $post->title = $title;
         $post->body = $body;
         $post->slug = $slug;
-        $post->updatedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
         $post->publishedAt = new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow'));
         $post->status = self::PUBLISHED;
 
@@ -160,14 +154,6 @@ class Post
     }
 
     /**
-     * @return \DateTimeImmutable
-     */
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    /**
      * @return string
      */
     public function getStatus(): string
@@ -181,14 +167,6 @@ class Post
     public function getPublishedAt(): \DateTimeImmutable
     {
         return $this->publishedAt;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function getUpdatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 
     /**

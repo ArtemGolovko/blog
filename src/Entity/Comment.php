@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\UpdatedAtTrait;
 use App\Repository\CommentRepository;
-use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CommentRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Comment
 {
@@ -41,24 +43,11 @@ class Comment
      */
     private $user;
 
-    /**
-     * @var DateTimeImmutable
-     *
-     * @ORM\Column(type="date_immutable")
-     */
-    private $createdAt;
-
-    /**
-     * @var DateTimeImmutable
-     *
-     * @ORM\Column(type="date_immutable")
-     */
-    private $updatedAt;
+    use CreatedAtTrait;
+    use UpdatedAtTrait;
 
     private function __construct()
     {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -126,11 +115,11 @@ class Comment
     }
 
     /**
-     * @return DateTimeImmutable
+     * @return mixed
      */
-    public function getCreatedAt(): DateTimeImmutable
+    public function getId()
     {
-        return $this->createdAt;
+        return $this->id;
     }
 
 
