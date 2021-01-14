@@ -17,7 +17,7 @@ trait CreatedAtTrait
     private $createdAt;
 
     /**
-     * @ORM\PrePersist()
+     * @ORM\PrePersist
      */
     public function updateCreatedAt()
     {

@@ -23,6 +23,8 @@ use Ramsey\Uuid\Uuid;
  */
 class Post
 {
+    use CreatedAtTrait, UpdatedAtTrait;
+
     public const DRAFT = 'draft';
     public const PUBLISHED = 'published';
 
@@ -83,8 +85,7 @@ class Post
      */
     private $comments;
 
-    use CreatedAtTrait;
-    use UpdatedAtTrait;
+
 
     private function __construct()
     {
@@ -94,9 +95,9 @@ class Post
 
     public static function fromDraft(
         User $user,
-        ?string $title,
-        ?string $body,
-        ?string $slug
+        ?string $title = null,
+        ?string $body = null,
+        ?string $slug = null
     ): Post {
 
         $post = new self();
@@ -180,5 +181,29 @@ class Post
     public function getComments()
     {
         return $this->comments;
+    }
+
+    /**
+     * @param mixed $slug
+     */
+    public function setSlug($slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title): void
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * @param mixed $body
+     */
+    public function setBody($body): void
+    {
+        $this->body = $body;
     }
 }

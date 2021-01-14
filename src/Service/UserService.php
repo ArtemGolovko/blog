@@ -1,26 +1,28 @@
 <?php
 
-declare(strict_types=1);
 
-namespace App\Application\Command;
+namespace App\Service;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 
-class UserManager
+class UserService
 {
     private $em;
     private $userRepository;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
         $this->userRepository = $em->getRepository(User::class);
     }
 
-    public function grand(string $email, array $roles)
+    public function grand(array $criteria, array $roles): bool
     {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy($criteria);
+        if (!$user) {
+            return false;
+        }
         $userRoles = $user->getRoles();
         $user->setRoles(
             array_unique(
@@ -31,11 +33,15 @@ class UserManager
             )
         );
         $this->em->flush();
+        return true;
     }
 
-    public function ungrand(string $email, array $roles)
+    public function ungrand(array $criteria, array $roles): bool
     {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneBy($criteria);
+        if (!$user) {
+            return false;
+        }
         $userRoles = $user->getRoles();
         $user->setRoles(
             array_unique(
@@ -49,5 +55,6 @@ class UserManager
             )
         );
         $this->em->flush();
+        return true;
     }
 }

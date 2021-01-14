@@ -4,40 +4,28 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use App\Entity\Post;
+use Doctrine\Persistence\ManagerRegistry;
 
-class PostRepository
+class PostRepository extends ServiceEntityRepository
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
-     * @var EntityRepository
-     */
-    private $repository;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->em = $em;
-        $this->repository = $em->getRepository(Post::class);
-    }
-
-    public function add(Post $post)
-    {
-        $this->em->persist($post);
+        parent::__construct($registry, Post::class);
     }
 
     public function findOneBySlug(string $slug)
     {
-        return $this->repository->findOneBy(['slug' => $slug]);
+        return $this->findOneBy(['slug' => $slug]);
     }
 
-    public function findAll()
+    public function searchByQuery(string $query)
     {
-        return $this->repository->findAll();
+        return $this->createQueryBuilder('p')
+            ->where('p.title LIKE :query')
+            ->setParameter('query', '%'. $query. '%')
+            ->getQuery()
+            ->getResult();
     }
 }

@@ -58,7 +58,6 @@ class PostsController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setSlug($slugify->slugify($post->getTitle()));
-            $post->setCreatedAt(new \DateTime());
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);
@@ -117,33 +116,6 @@ class PostsController extends AbstractController
 
         return $this->render('blog/query_post.html.twig', [
            'posts' => $posts
-        ]);
-    }
-
-    /**
-     * @Route("/posts/{slug}", name="blog_show")
-     * @IsGranted("ROLE_USER")
-     */
-    public function addComment(Post $post, Request $request)
-    {
-
-
-        $comment = Comment::create("", $this->getUser(), $post);
-
-        $form = $this->createForm(CommentType::class, $comment);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($comment);
-            $em->flush();
-        }
-
-
-        return $this->render('posts/show.html.twig', [
-            'post' => $post,
-            'form' =>  $form->createView()
         ]);
     }
 

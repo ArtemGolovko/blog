@@ -19,7 +19,8 @@ trait UpdatedAtTrait
     private $updatedAt;
 
     /**
-     * @ORM\PreUpdate()
+     * @ORM\PreUpdate
+     * @ORM\PrePersist
      */
     public function updateUpdatedAt()
     {

@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Comment
 {
+    use CreatedAtTrait, UpdatedAtTrait;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -43,8 +44,7 @@ class Comment
      */
     private $user;
 
-    use CreatedAtTrait;
-    use UpdatedAtTrait;
+
 
     private function __construct()
     {
