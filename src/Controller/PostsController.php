@@ -10,8 +10,6 @@ use App\Form\CommentType;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use Cocur\Slugify\Slugify;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -122,10 +120,26 @@ class PostsController extends AbstractController
     /**
      * @Route("/posts/{slug}", name="blog_show")
      */
-    public function post(Post $post)
+    public function post(Post $post, Request $request)
     {
+        if ($this->getUser() != null)
+        {
+            $comment = Comment::create('', $this->getUser(), $post);
+            $form = $this->createForm(CommentType::class, $comment);
+
+            $form->handleRequest($request);
+
+            if($form->isSubmitted() && $form->isValid())
+            {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($comment);
+                $em->flush();
+            }
+            $formView = $form->createView();
+        }
         return $this->render('posts/show.html.twig', [
-            'post' => $post
+            'post' => $post,
+            'form' => $formView ?? null
         ]);
     }
 }

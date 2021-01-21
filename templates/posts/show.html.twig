@@ -9,6 +9,14 @@
     <p>{{ post.body }}</p><hr>
     <span>{{ post.getCreatedAt() | date("m/d/Y") }}</span><br><hr>
     <h1>Коментарии</h1>
+    {% if form is not null %}
+        {{ form_start(form) }}
+            {{ form_row(form.comment) }}
+            <button type="submit">Опубликовать</button>
+        {{ form_end(form) }}
+    {% else %}
+        Войдите чтобы остовлять коментарии
+    {% endif %}
     {%  for comment in post.comments %}
         <p class="text-small">{{ comment.user.username }}</p>
         <p class="text-small">{{ comment.createdAt | date('d.m.Y H:i') }}</p>
